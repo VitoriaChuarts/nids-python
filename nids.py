@@ -1,3 +1,4 @@
+from siem_client import enviar_alerta
 from scapy.all import sniff, IP, TCP
 from collections import defaultdict
 from datetime import datetime
@@ -33,6 +34,7 @@ def processar_pacote(pacote):
                     with open("nids.log", "a", encoding="utf-8") as log:
                         log.write(alerta)
                     ultimo_alerta[ip_origem] = agora
+                    enviar_alerta(ip_origem, "port_scan", "high", {"ports": len(portas)})
                     contagem_portas[ip_origem].clear()
 
             # Verificação de SYN Flood
@@ -45,6 +47,7 @@ def processar_pacote(pacote):
                     with open("nids.log", "a", encoding="utf-8") as log:
                         log.write(alerta)
                     ultimo_alerta_flood[ip_origem] = agora
+                    enviar_alerta(ip_origem, "syn_flood", "high", {"syn_packets": contagem_syn[ip_origem]})
                     contagem_syn[ip_origem] = 0
 
 
